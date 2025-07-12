@@ -28,7 +28,12 @@ namespace Acme.BookStore.ExcelImport
             var preview = new ExcelPreviewDto { Data = new List<ExcelImportDto>(), Errors = new List<string>() };
             using (var stream = new MemoryStream(fileBytes))
             {
-                var rows = stream.Query<ExcelImportDto>().ToList();
+                var rows = stream.Query<ExcelImportDto>(sheetName: "MyBooks").ToList();
+                if (rows.Count > 100)
+                {
+                    preview.Errors.Add("The Excel file cannot have more than 100 rows.");
+                    return preview;
+                }
                 foreach (var row in rows)
                 {
                     var validationResults = new List<ValidationResult>();
