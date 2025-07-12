@@ -56,5 +56,16 @@ public class BookStoreMenuContributor : IMenuContributor
             ));
         }
 
+        // Add Excel Import menu item
+        //CHECK the PERMISSION (assuming same permission as books for now)
+        if (await context.IsGrantedAsync(BookStorePermissions.Books.Default))
+        {
+            bookStoreMenu.AddItem(new ApplicationMenuItem(
+                "BooksStore.ExcelImport", // A unique name for the menu item
+                l["Menu:ExcelImport"], // Display name - assuming you'll add this to localization
+                url: "/excel-import", // URL of the new page
+                icon: "fa fa-file-excel" // Icon for the menu item
+            ));
+        }
     }
 }

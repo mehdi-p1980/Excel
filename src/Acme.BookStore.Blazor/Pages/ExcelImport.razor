@@ -1,0 +1,107 @@
+@page "/excel-import"
+@using Acme.BookStore.ExcelImport
+@using Blazorise
+@using Microsoft.AspNetCore.Components.Forms
+@inject IExcelImportAppService ExcelImportAppService
+
+<h3>Excel Import</h3>
+
+<Card>
+    <CardBody>
+        <EditForm Model="@fileModel" OnValidSubmit="UploadFile">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <Field>
+                <FieldLabel>Select Excel File</FieldLabel>
+                <InputFile OnChange="HandleFileSelected" />
+            </Field>
+
+            <Button Color="Color.Primary" Type="ButtonType.Submit">Upload and Preview</Button>
+        </EditForm>
+    </CardBody>
+</Card>
+
+@if (previewDto != null)
+{
+    <Card>
+        <CardBody>
+            <h4>Preview</h4>
+
+            @if (previewDto.Errors.Any())
+            {
+                <Alert Color="Color.Danger" Visible="true">
+                    @foreach (var error in previewDto.Errors)
+                    {
+                        <p>@error</p>
+                    }
+                </Alert>
+            }
+
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell>Name</TableHeaderCell>
+                        <TableHeaderCell>Type</TableHeaderCell>
+                        <TableHeaderCell>Publish Date</TableHeaderCell>
+                        <TableHeaderCell>Price</TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    @foreach (var item in previewDto.Data)
+                    {
+                        <TableRow>
+                            <TableRowCell>@item.Name</TableRowCell>
+                            <TableRowCell>@item.Type</TableRowCell>
+                            <TableRowCell>@item.PublishDate.ToShortDateString()</TableRowCell>
+                            <TableRowCell>@item.Price</TableRowCell>
+                        </TableRow>
+                    }
+                </TableBody>
+            </Table>
+
+            @if (!previewDto.Errors.Any())
+            {
+                <Button Color="Color.Success" @onclick="ImportData">Import</Button>
+            }
+        </CardBody>
+    </Card>
+}
+
+@code {
+    private FileModel fileModel = new FileModel();
+    private ExcelPreviewDto previewDto;
+    private byte[] fileBytes;
+
+    private class FileModel
+    {
+        // No properties needed for this simple case
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using (var memoryStream = new MemoryStream())
+        {
+            await file.OpenReadStream().CopyToAsync(memoryStream);
+            fileBytes = memoryStream.ToArray();
+        }
+    }
+
+    private async Task UploadFile()
+    {
+        if (fileBytes != null)
+        {
+            previewDto = await ExcelImportAppService.UploadAsync(fileBytes);
+        }
+    }
+
+    private async Task ImportData()
+    {
+        if (previewDto != null && !previewDto.Errors.Any())
+        {
+            await ExcelImportAppService.ImportAsync(previewDto);
+            // Optionally, you can add a success message or navigate to another page
+        }
+    }
+}

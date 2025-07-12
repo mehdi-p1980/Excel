@@ -42,6 +42,7 @@
     "AuthorDeletionConfirmationMessage": "Are you sure to delete the author '{0}'?",
     "BirthDate": "Birth date",
     "NewAuthor": "New author",
-    "AnAuthorIsRequiredForCreatingBook": "An author is required to create a book"
+    "AnAuthorIsRequiredForCreatingBook": "An author is required to create a book",
+    "Menu:ExcelImport": "Excel Import"
   }
 }
