@@ -7,6 +7,7 @@ using Shouldly;
 using Xunit;
 using MiniExcelLibs;
 using Volo.Abp.Validation;
+using Acme.BookStore.Books;
 
 namespace Acme.BookStore.Application.Tests.ExcelImport
 {
