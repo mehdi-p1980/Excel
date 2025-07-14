@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Volo.Abp.Domain.Entities;
 
 namespace Acme.BookStore.Plans

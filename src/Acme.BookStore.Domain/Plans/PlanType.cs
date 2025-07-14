@@ -1,4 +1,4 @@
-namespace Acme.BookStore.Plans
+﻿namespace Acme.BookStore.Plans
 {
     public enum PlanType
     {
