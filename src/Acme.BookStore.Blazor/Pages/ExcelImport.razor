@@ -2,6 +2,7 @@
 @using Acme.BookStore.ExcelImport
 @using Blazorise
 @using Microsoft.AspNetCore.Components.Forms
+@using System.IO
 @inject IExcelImportAppService ExcelImportAppService
 
 <h3>Excel Import</h3>
@@ -10,7 +11,7 @@
     <CardBody>
         <EditForm Model="@fileModel" OnValidSubmit="UploadFile">
             <DataAnnotationsValidator />
-            <ValidationSummary />
+            @* <ValidationSummary /> *@
 
             <Field>
                 <FieldLabel>Select Excel File</FieldLabel>
