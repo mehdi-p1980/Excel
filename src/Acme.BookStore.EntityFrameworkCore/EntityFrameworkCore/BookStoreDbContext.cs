@@ -15,6 +15,8 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Acme.BookStore.Memberships;
+using Acme.BookStore.Plans;
 
 namespace Acme.BookStore.EntityFrameworkCore;
 
@@ -57,6 +59,8 @@ public class BookStoreDbContext :
     //Book Store
     public DbSet<Book> Books { get; set; }
     public DbSet<Author> Authors { get; set; }
+    public DbSet<Plans.Plan> Plans { get; set; }
+    public DbSet<Memberships.Membership> Memberships { get; set; }
 
 
     #endregion
@@ -108,5 +112,19 @@ public class BookStoreDbContext :
             b.HasIndex(x => x.Name);
         });
 
+        builder.Entity<Plans.Plan>(b =>
+        {
+            b.ToTable(BookStoreConsts.DbTablePrefix + "Plans",
+                BookStoreConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<Memberships.Membership>(b =>
+        {
+            b.ToTable(BookStoreConsts.DbTablePrefix + "Memberships",
+                BookStoreConsts.DbSchema);
+            b.ConfigureByConvention();
+        });
     }
 }
