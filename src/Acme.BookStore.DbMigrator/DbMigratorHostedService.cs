@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +38,9 @@ public class DbMigratorHostedService : IHostedService
                 .ServiceProvider
                 .GetRequiredService<BookStoreDbMigrationService>()
                 .MigrateAsync();
+
+            var backgroundJobs = application.ServiceProvider.GetRequiredService<IBackgroundJobServer>();
+            RecurringJob.AddOrUpdate<MembershipExpirationNotifier>("membership-expiration-notifier", x => x.NotifyUsers(), Cron.Daily);
 
             await application.ShutdownAsync();
 

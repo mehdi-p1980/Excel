@@ -1,0 +1,62 @@
+@page "/plan-selection"
+@using Acme.BookStore.Plans
+@using Acme.BookStore.Users
+@using Blazorise
+@using Volo.Abp.Users
+@inject IPlanAppService PlanAppService
+@inject ICurrentUser CurrentUser
+@inject IUserAppService UserService
+
+<h3>Select a Plan</h3>
+
+<Row>
+    @foreach (var plan in plans)
+    {
+        <Column ColumnSize="ColumnSize.Is4">
+            <Card>
+                <CardHeader>
+                    @plan.Name
+                </CardHeader>
+                <CardBody>
+                    <CardTitle>@plan.Price.ToString("C")</CardTitle>
+                    <CardText>
+                        @if (plan.Type == PlanType.Daily)
+                        {
+                            <span>@plan.DurationDays days</span>
+                        }
+                        else
+                        {
+                            <span>@plan.DocumentCount documents</span>
+                        }
+                    </CardText>
+                    <Button Color="Color.Primary" @onclick="() => SelectPlan(plan.Id)">Select</Button>
+                </CardBody>
+            </Card>
+        </Column>
+    }
+</Row>
+
+@code {
+    private IReadOnlyList<PlanDto> plans = new List<PlanDto>();
+    private AppUser user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allPlans = (await PlanAppService.GetListAsync(new ()))?.Items;
+        user = await UserService.GetAsync(CurrentUser.Id.Value);
+
+        if (user.HasUsedTrialPlan)
+        {
+            plans = allPlans.Where(p => p.Name != "Trial").ToList();
+        }
+        else
+        {
+            plans = allPlans;
+        }
+    }
+
+    private void SelectPlan(Guid planId)
+    {
+        // TODO: Redirect to payment page or create membership directly
+    }
+}

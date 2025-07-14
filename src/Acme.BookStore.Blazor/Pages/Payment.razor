@@ -1,0 +1,16 @@
+@page "/payment/{planId:guid}"
+@inject NavigationManager NavigationManager
+@inject IPaymentAppService PaymentAppService
+
+<h3>Payment</h3>
+
+@code {
+    [Parameter]
+    public Guid PlanId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var paymentUrl = await PaymentAppService.GetPaymentUrl(PlanId);
+        NavigationManager.NavigateTo(paymentUrl);
+    }
+}

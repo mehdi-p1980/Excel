@@ -1,10 +1,9 @@
-﻿using System;
-
-using Volo.Abp.Domain.Entities;
+using System;
+using Volo.Abp.Application.Dtos;
 
 namespace Acme.BookStore.Memberships
 {
-    public class Membership : Entity<Guid>
+    public class MembershipDto : EntityDto<Guid>
     {
         public Guid UserId { get; set; }
         public Guid PlanId { get; set; }
