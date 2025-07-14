@@ -9,7 +9,16 @@ namespace Acme.BookStore.DbMigrator;
     typeof(BookStoreEntityFrameworkCoreModule),
     typeof(BookStoreApplicationContractsModule)
     )]
+using Hangfire;
+using Microsoft.Extensions.DependencyInjection;
+
 public class BookStoreDbMigratorModule : AbpModule
 {
-
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        context.Services.AddHangfire(config =>
+        {
+            config.UseMemoryStorage();
+        });
+    }
 }

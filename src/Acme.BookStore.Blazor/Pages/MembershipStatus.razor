@@ -1,0 +1,37 @@
+@page "/membership-status"
+@using Acme.BookStore.Memberships
+@inject IMembershipAppService MembershipAppService
+
+<h3>Membership Status</h3>
+
+@if (membership != null)
+{
+    <Card>
+        <CardBody>
+            <CardTitle>@membership.PlanId</CardTitle>
+            <CardText>
+                @if (membership.EndDate.HasValue)
+                {
+                    <span>Expires on @membership.EndDate.Value.ToShortDateString()</span>
+                }
+                else
+                {
+                    <span>@membership.RemainingDocuments documents remaining</span>
+                }
+            </CardText>
+        </CardBody>
+    </Card>
+}
+else
+{
+    <p>You do not have an active membership.</p>
+}
+
+@code {
+    private MembershipDto membership;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // TODO: Get the current user's membership
+    }
+}

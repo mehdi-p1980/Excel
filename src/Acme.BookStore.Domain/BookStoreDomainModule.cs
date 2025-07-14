@@ -60,6 +60,17 @@ public class BookStoreDomainModule : AbpModule
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
         });
 
+        Configure<AbpIdentityOptions>(options =>
+        {
+            options.User = new IdentityUserOptions
+            {
+                // ...
+            };
+            options.User.RequireUniqueEmail = true;
+        });
+
+        context.Services.AddTransient<IdentityUser, Users.AppUser>();
+
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif
