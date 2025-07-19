@@ -22,4 +22,8 @@
     <PackageReference Include="MiniExcel" Version="1.31.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Payments\" />
+  </ItemGroup>
+
 </Project>
