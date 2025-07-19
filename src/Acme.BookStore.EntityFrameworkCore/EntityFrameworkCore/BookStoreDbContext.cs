@@ -19,7 +19,6 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using Acme.BookStore.Memberships;
 using Acme.BookStore.Plans;
-using Acme.BookStore.Payments;
 
 namespace Acme.BookStore.EntityFrameworkCore;
 
@@ -64,7 +63,6 @@ public class BookStoreDbContext :
     public DbSet<Author> Authors { get; set; }
     public DbSet<Plans.Plan> Plans { get; set; }
     public DbSet<Memberships.Membership> Memberships { get; set; }
-    public DbSet<Payment> Payments { get; set; }
 
 
     #endregion
@@ -127,13 +125,6 @@ public class BookStoreDbContext :
         builder.Entity<Memberships.Membership>(b =>
         {
             b.ToTable(BookStoreConsts.DbTablePrefix + "Memberships",
-                BookStoreConsts.DbSchema);
-            b.ConfigureByConvention();
-        });
-
-        builder.Entity<Payment>(b =>
-        {
-            b.ToTable(BookStoreConsts.DbTablePrefix + "Payments",
                 BookStoreConsts.DbSchema);
             b.ConfigureByConvention();
         });
