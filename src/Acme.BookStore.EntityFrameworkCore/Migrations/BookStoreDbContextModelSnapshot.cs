@@ -174,31 +174,6 @@ namespace Acme.BookStore.Migrations
                     b.ToTable("AppMemberships", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.BookStore.Payments.Payment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("PlanId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppPayments", (string)null);
-                });
-
             modelBuilder.Entity("Acme.BookStore.Plans.Plan", b =>
                 {
                     b.Property<Guid>("Id")
