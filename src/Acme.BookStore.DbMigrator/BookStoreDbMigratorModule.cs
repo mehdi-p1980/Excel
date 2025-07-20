@@ -1,6 +1,9 @@
 ﻿using Acme.BookStore.EntityFrameworkCore;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
+using Hangfire;
+using Microsoft.Extensions.DependencyInjection;
+using Hangfire.MemoryStorage;
 
 namespace Acme.BookStore.DbMigrator;
 
@@ -8,9 +11,7 @@ namespace Acme.BookStore.DbMigrator;
     typeof(AbpAutofacModule),
     typeof(BookStoreEntityFrameworkCoreModule),
     typeof(BookStoreApplicationContractsModule)
-    )]
-using Hangfire;
-using Microsoft.Extensions.DependencyInjection;
+   ) ]
 
 public class BookStoreDbMigratorModule : AbpModule
 {

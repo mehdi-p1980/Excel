@@ -60,14 +60,14 @@ public class BookStoreDomainModule : AbpModule
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
         });
 
-        Configure<AbpIdentityOptions>(options =>
-        {
-            options.User = new IdentityUserOptions
-            {
-                // ...
-            };
-            options.User.RequireUniqueEmail = true;
-        });
+        //Configure<AbpIdentityOptions>(options =>
+        //{
+        //    options.User = new IdentityUserOptions
+        //    {
+        //        // ...
+        //    };
+        //    options.User.RequireUniqueEmail = true;
+        //});
 
         context.Services.AddTransient<IdentityUser, Users.AppUser>();
 

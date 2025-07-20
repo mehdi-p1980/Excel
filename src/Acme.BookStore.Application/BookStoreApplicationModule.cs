@@ -30,6 +30,6 @@ public class BookStoreApplicationModule : AbpModule
             options.AddMaps<BookStoreApplicationModule>();
         });
 
-        context.Services.Replace(ServiceDescriptor.Transient<IAccountAppService, Account.CustomAccountAppService>());
+      //  context.Services.Replace(ServiceDescriptor.Transient<IAccountAppService, Account.CustomAccountAppService>());
     }
 }

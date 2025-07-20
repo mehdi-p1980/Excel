@@ -26,10 +26,10 @@ public class DbMigratorHostedService : IHostedService
     {
         using (var application = await AbpApplicationFactory.CreateAsync<BookStoreDbMigratorModule>(options =>
         {
-           options.Services.ReplaceConfiguration(_configuration);
-           options.UseAutofac();
-           options.Services.AddLogging(c => c.AddSerilog());
-           options.AddDataMigrationEnvironment();
+            options.Services.ReplaceConfiguration(_configuration);
+            options.UseAutofac();
+            options.Services.AddLogging(c => c.AddSerilog());
+            options.AddDataMigrationEnvironment();
         }))
         {
             await application.InitializeAsync();
@@ -39,8 +39,8 @@ public class DbMigratorHostedService : IHostedService
                 .GetRequiredService<BookStoreDbMigrationService>()
                 .MigrateAsync();
 
-            var backgroundJobs = application.ServiceProvider.GetRequiredService<IBackgroundJobServer>();
-            RecurringJob.AddOrUpdate<MembershipExpirationNotifier>("membership-expiration-notifier", x => x.NotifyUsers(), Cron.Daily);
+       //     var backgroundJobs = application.ServiceProvider.GetRequiredService<IBackgroundJobServer>();
+       //     RecurringJob.AddOrUpdate<MembershipExpirationNotifier>("membership-expiration-notifier", x => x.NotifyUsers(), Cron.Daily);
 
             await application.ShutdownAsync();
 

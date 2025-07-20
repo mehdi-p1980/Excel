@@ -5,7 +5,7 @@
 @using Volo.Abp.Users
 @inject IPlanAppService PlanAppService
 @inject ICurrentUser CurrentUser
-@inject IUserAppService UserService
+@* @inject IUserAppService UserService *@
 
 <h3>Select a Plan</h3>
 
@@ -43,7 +43,7 @@
     protected override async Task OnInitializedAsync()
     {
         var allPlans = (await PlanAppService.GetListAsync(new ()))?.Items;
-        user = await UserService.GetAsync(CurrentUser.Id.Value);
+       // user = await UserService.GetAsync(CurrentUser.Id.Value);
 
         if (user.HasUsedTrialPlan)
         {
