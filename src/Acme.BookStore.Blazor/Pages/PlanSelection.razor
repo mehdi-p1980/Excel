@@ -5,7 +5,9 @@
 @using Volo.Abp.Users
 @inject IPlanAppService PlanAppService
 @inject ICurrentUser CurrentUser
-@* @inject IUserAppService UserService *@
+@inject Volo.Abp.Identity.IIdentityUserAppService UserAppService
+@inject NavigationManager NavigationManager
+@inject IMembershipAppService MembershipAppService
 
 <h3>Select a Plan</h3>
 
@@ -38,14 +40,14 @@
 
 @code {
     private IReadOnlyList<PlanDto> plans = new List<PlanDto>();
-    private AppUser user;
+    private IdentityUserDto user;
 
     protected override async Task OnInitializedAsync()
     {
         var allPlans = (await PlanAppService.GetListAsync(new ()))?.Items;
-       // user = await UserService.GetAsync(CurrentUser.Id.Value);
+        user = await UserAppService.GetAsync(CurrentUser.Id.Value);
 
-        if (user.HasUsedTrialPlan)
+        if (user.GetProperty<bool>("HasUsedTrialPlan"))
         {
             plans = allPlans.Where(p => p.Name != "Trial").ToList();
         }
@@ -55,8 +57,17 @@
         }
     }
 
-    private void SelectPlan(Guid planId)
+    private async Task SelectPlan(Guid planId)
     {
-        // TODO: Redirect to payment page or create membership directly
+        var plan = plans.First(p => p.Id == planId);
+        if (plan.Price == 0)
+        {
+            await MembershipAppService.ExtendMembership(planId);
+            NavigationManager.NavigateTo("/membership-status");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/payment/{planId}");
+        }
     }
 }

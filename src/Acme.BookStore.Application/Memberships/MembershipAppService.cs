@@ -37,10 +37,10 @@ public class MembershipAppService : CrudAppService<Membership, MembershipDto, Gu
             var user = await _userManager.GetByIdAsync(userId);
             var plan = await _planAppService.GetAsync(planId);
 
-            //if (plan.Name == "Trial" && user.HasUsedTrialPlan)
-            //{
-            //    throw new UserFriendlyException("You have already used the trial plan.");
-            //}
+            if (plan.Name == "Trial" && user.HasUsedTrialPlan)
+            {
+                throw new UserFriendlyException("You have already used the trial plan.");
+            }
 
             var membership = await Repository.FirstOrDefaultAsync(m => m.UserId == userId && m.IsActive);
             if (membership == null)
@@ -80,11 +80,11 @@ public class MembershipAppService : CrudAppService<Membership, MembershipDto, Gu
                 await Repository.UpdateAsync(membership);
             }
 
-            //if (plan.Name == "Trial")
-            //{
-            //    user.HasUsedTrialPlan = true;
-            //    await _userManager.UpdateAsync(user);
-            //}
+            if (plan.Name == "Trial")
+            {
+                user.HasUsedTrialPlan = true;
+                await _userManager.UpdateAsync(user);
+            }
         }
 
         public async Task CancelMembership()

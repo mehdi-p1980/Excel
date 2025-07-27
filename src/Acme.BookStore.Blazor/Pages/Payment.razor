@@ -1,16 +1,37 @@
 @page "/payment/{planId:guid}"
+@using Acme.BookStore.Payments
 @inject NavigationManager NavigationManager
 @inject IPaymentAppService PaymentAppService
 
 <h3>Payment</h3>
 
+<div>
+    <input type="radio" name="paymentMethod" value="@PaymentMethod.SamanGateway" @onchange="() => SelectedPaymentMethod = PaymentMethod.SamanGateway" checked />
+    <label>Saman Gateway</label>
+</div>
+<div>
+    <input type="radio" name="paymentMethod" value="@PaymentMethod.Deposit" @onchange="() => SelectedPaymentMethod = PaymentMethod.Deposit" />
+    <label>Deposit to Account</label>
+</div>
+
+<Button Color="Color.Primary" @onclick="ProceedToPayment">Proceed</Button>
+
 @code {
     [Parameter]
     public Guid PlanId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private PaymentMethod SelectedPaymentMethod { get; set; } = PaymentMethod.SamanGateway;
+
+    private async Task ProceedToPayment()
     {
-        var paymentUrl = await PaymentAppService.GetPaymentUrl(PlanId);
-        NavigationManager.NavigateTo(paymentUrl);
+        if (SelectedPaymentMethod == PaymentMethod.SamanGateway)
+        {
+            var paymentUrl = await PaymentAppService.GetPaymentUrl(PlanId);
+            NavigationManager.NavigateTo(paymentUrl);
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/deposit-payment/{PlanId}");
+        }
     }
 }

@@ -1,0 +1,46 @@
+@page "/deposit-payment/{planId:guid}"
+@using Acme.BookStore.Payments
+@using System.IO
+@inject NavigationManager NavigationManager
+@inject IDepositAppService DepositAppService
+
+<h3>Deposit to Account</h3>
+
+<div>
+    <p>Please deposit the amount to the following bank account:</p>
+    <p><strong>Bank Name:</strong> Saman Bank</p>
+    <p><strong>Account Number:</strong> 123-456-789</p>
+    <p><strong>Account Holder:</strong> Acme Inc.</p>
+</div>
+
+<div>
+    <p>After depositing, please upload the receipt here:</p>
+    <InputFile OnChange="OnInputFileChange" />
+    <Button Color="Color.Primary" @onclick="SubmitDepositReceipt">Submit</Button>
+</div>
+
+@code {
+    [Parameter]
+    public Guid PlanId { get; set; }
+
+    private IBrowserFile selectedFile;
+
+    private void OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    private async Task SubmitDepositReceipt()
+    {
+        if (selectedFile != null)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await selectedFile.OpenReadStream().CopyToAsync(memoryStream);
+                var receipt = memoryStream.ToArray();
+                await DepositAppService.SubmitDepositReceipt(PlanId, receipt);
+                NavigationManager.NavigateTo("/membership-status");
+            }
+        }
+    }
+}
