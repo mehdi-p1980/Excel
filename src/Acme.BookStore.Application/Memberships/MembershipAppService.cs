@@ -8,19 +8,26 @@ using Volo.Abp.Users;
 namespace Acme.BookStore.Memberships
 {
 using Acme.BookStore.Plans;
-
+using Acme.BookStore.Users;
 using Volo.Abp.Identity;
 
 public class MembershipAppService : CrudAppService<Membership, MembershipDto, Guid>, IMembershipAppService
     {
         private readonly ICurrentUser _currentUser;
         private readonly IPlanAppService _planAppService;
+        private readonly IRepository<AppUser, Guid> _userRepository;
         private readonly IdentityUserManager _userManager;
 
-        public MembershipAppService(IRepository<Membership, Guid> repository, ICurrentUser currentUser, IPlanAppService planAppService, IdentityUserManager userManager) : base(repository)
+        public MembershipAppService(
+            IRepository<Membership, Guid> repository,
+            ICurrentUser currentUser,
+            IPlanAppService planAppService,
+            IRepository<AppUser, Guid> userRepository,
+            IdentityUserManager userManager) : base(repository)
         {
             _currentUser = currentUser;
             _planAppService = planAppService;
+            _userRepository = userRepository;
             _userManager = userManager;
         }
 
@@ -34,7 +41,7 @@ public class MembershipAppService : CrudAppService<Membership, MembershipDto, Gu
         public async Task ExtendMembership(Guid planId)
         {
             var userId = _currentUser.Id.GetValueOrDefault();
-            var user = await _userManager.GetByIdAsync(userId);
+            var user = await _userRepository.GetAsync(userId);
             var plan = await _planAppService.GetAsync(planId);
 
             if (plan.Name == "Trial" && user.HasUsedTrialPlan)
@@ -83,7 +90,7 @@ public class MembershipAppService : CrudAppService<Membership, MembershipDto, Gu
             if (plan.Name == "Trial")
             {
                 user.HasUsedTrialPlan = true;
-                await _userManager.UpdateAsync(user);
+                await _userRepository.UpdateAsync(user);
             }
         }
 
