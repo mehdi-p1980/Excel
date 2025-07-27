@@ -9,6 +9,7 @@
 <Table>
     <TableHeader>
         <TableRow>
+            <TableHeaderCell>Code</TableHeaderCell>
             <TableHeaderCell>Name</TableHeaderCell>
             <TableHeaderCell>Type</TableHeaderCell>
             <TableHeaderCell>Balance</TableHeaderCell>
@@ -18,6 +19,7 @@
         @foreach (var account in accounts)
         {
             <TableRow>
+                <TableRowCell>@account.Code</TableRowCell>
                 <TableRowCell>@account.Name</TableRowCell>
                 <TableRowCell>@account.Type</TableRowCell>
                 <TableRowCell>@account.Balance</TableRowCell>
@@ -33,6 +35,10 @@
             <CloseButton />
         </ModalHeader>
         <ModalBody>
+            <Field>
+                <FieldLabel>Code</FieldLabel>
+                <TextEdit @bind-Text="newAccountCode" />
+            </Field>
             <Field>
                 <FieldLabel>Name</FieldLabel>
                 <TextEdit @bind-Text="newAccountName" />
@@ -57,6 +63,7 @@
 @code {
     private IReadOnlyList<AccountDto> accounts = new List<AccountDto>();
     private Modal createAccountModal;
+    private string newAccountCode;
     private string newAccountName;
     private AccountType newAccountType;
 
@@ -77,7 +84,7 @@
 
     private async Task CreateAccount()
     {
-        await AccountingAppService.CreateAccountAsync(newAccountName, newAccountType);
+        await AccountingAppService.CreateAccountAsync(newAccountCode, newAccountName, newAccountType);
         CloseCreateAccountModal();
         // TODO: Refresh the list of accounts
     }

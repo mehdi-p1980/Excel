@@ -19,10 +19,11 @@ namespace Acme.BookStore.Accounting
             _journalEntryRepository = journalEntryRepository;
         }
 
-        public async Task CreateAccountAsync(string name, AccountType type)
+        public async Task CreateAccountAsync(string code, string name, AccountType type)
         {
             var account = new Account
             {
+                Code = code,
                 Name = name,
                 Type = type
             };

@@ -5,6 +5,7 @@ namespace Acme.BookStore.Accounting
 {
     public class Account : Entity<Guid>
     {
+        public string Code { get; set; }
         public string Name { get; set; }
         public AccountType Type { get; set; }
         public decimal Balance { get; set; }

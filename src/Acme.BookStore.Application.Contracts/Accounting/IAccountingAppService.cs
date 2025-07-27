@@ -6,7 +6,7 @@ namespace Acme.BookStore.Accounting
 {
     public interface IAccountingAppService : IApplicationService
     {
-        Task CreateAccountAsync(string name, AccountType type);
+        Task CreateAccountAsync(string code, string name, AccountType type);
         Task CreateJournalEntryAsync(DateTime date, string description, JournalEntryLineDto[] lines);
     }
 
