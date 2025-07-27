@@ -4,14 +4,15 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
+using Acme.BookStore.Plans;
+using Acme.BookStore.Users;
+using Volo.Abp;
+using Volo.Abp.Identity;
 
 namespace Acme.BookStore.Memberships
 {
-using Acme.BookStore.Plans;
-using Acme.BookStore.Users;
-using Volo.Abp.Identity;
 
-public class MembershipAppService : CrudAppService<Membership, MembershipDto, Guid>, IMembershipAppService
+    public class MembershipAppService : CrudAppService<Membership, MembershipDto, Guid>, IMembershipAppService
     {
         private readonly ICurrentUser _currentUser;
         private readonly IPlanAppService _planAppService;
