@@ -1,0 +1,84 @@
+@page "/accounting/chart-of-accounts"
+@using Acme.BookStore.Accounting
+@inject IAccountingAppService AccountingAppService
+
+<h3>Chart of Accounts</h3>
+
+<Button Color="Color.Primary" @onclick="OpenCreateAccountModal">Create Account</Button>
+
+<Table>
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>Name</TableHeaderCell>
+            <TableHeaderCell>Type</TableHeaderCell>
+            <TableHeaderCell>Balance</TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @foreach (var account in accounts)
+        {
+            <TableRow>
+                <TableRowCell>@account.Name</TableRowCell>
+                <TableRowCell>@account.Type</TableRowCell>
+                <TableRowCell>@account.Balance</TableRowCell>
+            </TableRow>
+        }
+    </TableBody>
+</Table>
+
+<Modal @ref="createAccountModal">
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>Create Account</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Name</FieldLabel>
+                <TextEdit @bind-Text="newAccountName" />
+            </Field>
+            <Field>
+                <FieldLabel>Type</FieldLabel>
+                <Select TValue="AccountType" @bind-SelectedValue="newAccountType">
+                    @foreach (AccountType type in Enum.GetValues(typeof(AccountType)))
+                    {
+                        <SelectItem TValue="AccountType" Value="type">@type.ToString()</SelectItem>
+                    }
+                </Select>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" @onclick="CloseCreateAccountModal">Cancel</Button>
+            <Button Color="Color.Primary" @onclick="CreateAccount">Create</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    private IReadOnlyList<AccountDto> accounts = new List<AccountDto>();
+    private Modal createAccountModal;
+    private string newAccountName;
+    private AccountType newAccountType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // TODO: Get the list of accounts
+    }
+
+    private void OpenCreateAccountModal()
+    {
+        createAccountModal.Show();
+    }
+
+    private void CloseCreateAccountModal()
+    {
+        createAccountModal.Hide();
+    }
+
+    private async Task CreateAccount()
+    {
+        await AccountingAppService.CreateAccountAsync(newAccountName, newAccountType);
+        CloseCreateAccountModal();
+        // TODO: Refresh the list of accounts
+    }
+}

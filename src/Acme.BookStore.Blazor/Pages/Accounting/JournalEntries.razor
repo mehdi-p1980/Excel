@@ -1,0 +1,118 @@
+@page "/accounting/journal-entries"
+@using Acme.BookStore.Accounting
+@inject IAccountingAppService AccountingAppService
+
+<h3>Journal Entries</h3>
+
+<Button Color="Color.Primary" @onclick="OpenCreateJournalEntryModal">Create Journal Entry</Button>
+
+<Table>
+    <TableHeader>
+        <TableRow>
+            <TableHeaderCell>Date</TableHeaderCell>
+            <TableHeaderCell>Description</TableHeaderCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        @foreach (var entry in journalEntries)
+        {
+            <TableRow>
+                <TableRowCell>@entry.Date.ToShortDateString()</TableRowCell>
+                <TableRowCell>@entry.Description</TableRowCell>
+            </TableRow>
+        }
+    </TableBody>
+</Table>
+
+<Modal @ref="createJournalEntryModal">
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>Create Journal Entry</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Date</FieldLabel>
+                <DateEdit TValue="DateTime" @bind-Date="newJournalEntryDate" />
+            </Field>
+            <Field>
+                <FieldLabel>Description</FieldLabel>
+                <TextEdit @bind-Text="newJournalEntryDescription" />
+            </Field>
+            <Field>
+                <FieldLabel>Lines</FieldLabel>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHeaderCell>Account</TableHeaderCell>
+                            <TableHeaderCell>Debit</TableHeaderCell>
+                            <TableHeaderCell>Credit</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        @foreach (var line in newJournalEntryLines)
+                        {
+                            <TableRow>
+                                <TableRowCell>
+                                    <Select TValue="Guid" @bind-SelectedValue="line.AccountId">
+                                        @foreach (var account in accounts)
+                                        {
+                                            <SelectItem TValue="Guid" Value="account.Id">@account.Name</SelectItem>
+                                        }
+                                    </Select>
+                                </TableRowCell>
+                                <TableRowCell>
+                                    <NumericEdit TValue="decimal" @bind-Value="line.Debit" />
+                                </TableRowCell>
+                                <TableRowCell>
+                                    <NumericEdit TValue="decimal" @bind-Value="line.Credit" />
+                                </TableRowCell>
+                            </TableRow>
+                        }
+                    </TableBody>
+                </Table>
+                <Button Color="Color.Primary" @onclick="AddJournalEntryLine">Add Line</Button>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" @onclick="CloseCreateJournalEntryModal">Cancel</Button>
+            <Button Color="Color.Primary" @onclick="CreateJournalEntry">Create</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    private IReadOnlyList<JournalEntryDto> journalEntries = new List<JournalEntryDto>();
+    private IReadOnlyList<AccountDto> accounts = new List<AccountDto>();
+    private Modal createJournalEntryModal;
+    private DateTime newJournalEntryDate = DateTime.UtcNow;
+    private string newJournalEntryDescription;
+    private List<JournalEntryLineDto> newJournalEntryLines = new List<JournalEntryLineDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // TODO: Get the list of journal entries and accounts
+    }
+
+    private void OpenCreateJournalEntryModal()
+    {
+        createJournalEntryModal.Show();
+    }
+
+    private void CloseCreateJournalEntryModal()
+    {
+        createJournalEntryModal.Hide();
+    }
+
+    private void AddJournalEntryLine()
+    {
+        newJournalEntryLines.Add(new JournalEntryLineDto());
+    }
+
+    private async Task CreateJournalEntry()
+    {
+        await AccountingAppService.CreateJournalEntryAsync(newJournalEntryDate, newJournalEntryDescription, newJournalEntryLines.ToArray());
+        CloseCreateJournalEntryModal();
+        // TODO: Refresh the list of journal entries
+    }
+}
