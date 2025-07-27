@@ -47,7 +47,7 @@
         var allPlans = (await PlanAppService.GetListAsync(new ()))?.Items;
         user = await UserAppService.GetAsync(CurrentUser.Id.Value);
 
-        if (user.GetProperty<bool>("HasUsedTrialPlan"))
+        if (user.ExtraProperties.ContainsKey("HasUsedTrialPlan") && (bool)user.ExtraProperties["HasUsedTrialPlan"])
         {
             plans = allPlans.Where(p => p.Name != "Trial").ToList();
         }
