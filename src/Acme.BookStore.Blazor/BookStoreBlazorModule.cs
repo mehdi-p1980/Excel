@@ -1,4 +1,5 @@
 using System.IO;
+using Acme.BookStore.Payments.Saman;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
@@ -99,6 +100,7 @@ public class BookStoreBlazorModule : AbpModule
         ConfigureBlazorise(context);
         ConfigureRouter(context);
         ConfigureMenu(context);
+        Configure<SamanGatewayOptions>(context.Services.GetConfiguration().GetSection("SamanGateway"));
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
