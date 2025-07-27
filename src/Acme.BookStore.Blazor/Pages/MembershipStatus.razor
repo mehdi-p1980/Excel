@@ -1,14 +1,16 @@
 @page "/membership-status"
 @using Acme.BookStore.Memberships
+@using Acme.BookStore.Plans
 @inject IMembershipAppService MembershipAppService
+@inject IPlanAppService PlanAppService
 
 <h3>Membership Status</h3>
 
-@if (membership != null)
+@if (membership != null && plan != null)
 {
     <Card>
         <CardBody>
-            <CardTitle>@membership.PlanId</CardTitle>
+            <CardTitle>@plan.Name</CardTitle>
             <CardText>
                 @if (membership.EndDate.HasValue)
                 {
@@ -29,9 +31,14 @@ else
 
 @code {
     private MembershipDto membership;
+    private PlanDto plan;
 
     protected override async Task OnInitializedAsync()
     {
-        // TODO: Get the current user's membership
+        membership = await MembershipAppService.GetActiveMembership();
+        if (membership != null)
+        {
+            plan = await PlanAppService.GetAsync(membership.PlanId);
+        }
     }
 }
