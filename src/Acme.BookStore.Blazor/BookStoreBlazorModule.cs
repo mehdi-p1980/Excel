@@ -2,6 +2,7 @@ using System.IO;
 using Acme.BookStore.Payments.Saman;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -101,6 +102,11 @@ public class BookStoreBlazorModule : AbpModule
         ConfigureRouter(context);
         ConfigureMenu(context);
         Configure<SamanGatewayOptions>(context.Services.GetConfiguration().GetSection("SamanGateway"));
+
+        context.Services.AddHangfire(config =>
+        {
+            config.UseSqlServerStorage(context.Services.GetConfiguration().GetConnectionString("Default"));
+        });
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
@@ -245,6 +251,10 @@ public class BookStoreBlazorModule : AbpModule
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "BookStore API");
         });
+        app.UseHangfireDashboard();
         app.UseConfiguredEndpoints();
+
+        RecurringJob.AddOrUpdate<MembershipExpirationJob>("MembershipExpirationJob", job => job.ExecuteAsync(), Cron.Daily);
+        RecurringJob.AddOrUpdate<MembershipExpirationNotifierJob>("MembershipExpirationNotifierJob", job => job.ExecuteAsync(), Cron.Daily);
     }
 }
