@@ -8,7 +8,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore.Memberships.Jobs
 {
-    public class MembershipExpirationJob : IBackgroundJob<Guid>, ITransientDependency
+    public class MembershipExpirationJob : IBackgroundJob, ITransientDependency
     {
         private readonly IRepository<Membership, Guid> _membershipRepository;
         private readonly IRepository<Plan, Guid> _planRepository;
@@ -21,34 +21,32 @@ namespace Acme.BookStore.Memberships.Jobs
             _planRepository = planRepository;
         }
 
-        public async Task ExecuteAsync(Guid membershipId)
+        public async Task ExecuteAsync()
         {
-            var membership = await _membershipRepository.GetAsync(membershipId);
-            if (membership == null || !membership.IsActive)
+            var memberships = await _membershipRepository.GetListAsync(m => m.IsActive);
+            foreach (var membership in memberships)
             {
-                return;
-            }
-
-            var plan = await _planRepository.GetAsync(membership.PlanId);
-            if (plan == null)
-            {
-                return;
-            }
-
-            if (plan.Type == PlanType.Daily)
-            {
-                if (membership.EndDate < DateTime.UtcNow)
+                var plan = await _planRepository.GetAsync(membership.PlanId);
+                if (plan == null)
                 {
-                    membership.IsActive = false;
-                    await _membershipRepository.UpdateAsync(membership);
+                    continue;
                 }
-            }
-            else
-            {
-                if (membership.RemainingDocuments <= 0)
+
+                if (plan.Type == PlanType.Daily)
                 {
-                    membership.IsActive = false;
-                    await _membershipRepository.UpdateAsync(membership);
+                    if (membership.EndDate < DateTime.UtcNow)
+                    {
+                        membership.IsActive = false;
+                        await _membershipRepository.UpdateAsync(membership);
+                    }
+                }
+                else
+                {
+                    if (membership.RemainingDocuments <= 0)
+                    {
+                        membership.IsActive = false;
+                        await _membershipRepository.UpdateAsync(membership);
+                    }
                 }
             }
         }

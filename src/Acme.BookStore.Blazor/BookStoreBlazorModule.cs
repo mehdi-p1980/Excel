@@ -254,7 +254,7 @@ public class BookStoreBlazorModule : AbpModule
         app.UseHangfireDashboard();
         app.UseConfiguredEndpoints();
 
-        RecurringJob.AddOrUpdate<MembershipExpirationJob>("MembershipExpirationJob", job => job.ExecuteAsync(Guid.Empty), Cron.Daily);
-        RecurringJob.AddOrUpdate<MembershipExpirationNotifierJob>("MembershipExpirationNotifierJob", job => job.ExecuteAsync(Guid.Empty), Cron.Daily);
+        RecurringJob.AddOrUpdate<MembershipExpirationJob>("MembershipExpirationJob", job => job.ExecuteAsync(), Cron.Daily);
+        RecurringJob.AddOrUpdate<MembershipExpirationNotifierJob>("MembershipExpirationNotifierJob", job => job.ExecuteAsync(), Cron.Daily);
     }
 }

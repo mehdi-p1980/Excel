@@ -9,7 +9,7 @@ using Volo.Abp.Users;
 
 namespace Acme.BookStore.Memberships.Jobs
 {
-    public class MembershipExpirationNotifierJob : IBackgroundJob<Guid>, ITransientDependency
+    public class MembershipExpirationNotifierJob : IBackgroundJob, ITransientDependency
     {
         private readonly IRepository<Membership, Guid> _membershipRepository;
         private readonly IEmailSender _emailSender;
@@ -25,15 +25,10 @@ namespace Acme.BookStore.Memberships.Jobs
             _userRepository = userRepository;
         }
 
-        public async Task ExecuteAsync(Guid membershipId)
+        public async Task ExecuteAsync()
         {
-            var membership = await _membershipRepository.GetAsync(membershipId);
-            if (membership == null || !membership.IsActive)
-            {
-                return;
-            }
-
-            if (membership.EndDate.HasValue && membership.EndDate.Value.Date == DateTime.UtcNow.Date.AddDays(3))
+            var memberships = await _membershipRepository.GetListAsync(m => m.IsActive && m.EndDate.HasValue && m.EndDate.Value.Date == DateTime.UtcNow.Date.AddDays(3));
+            foreach (var membership in memberships)
             {
                 var user = await _userRepository.GetAsync(membership.UserId);
                 if (user != null && !string.IsNullOrEmpty(user.Email))
